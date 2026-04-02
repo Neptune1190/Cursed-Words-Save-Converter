@@ -4,12 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cursed Words Save Updater</title>
+
 <style>
 body {
   font-family: system-ui, sans-serif;
   margin: 40px;
   background: #f5f7fb;
 }
+
 .container {
   max-width: 800px;
   margin: auto;
@@ -18,9 +20,9 @@ body {
   border-radius: 12px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.08);
 }
-h1 {
-  margin-top: 0;
-}
+
+h1 { margin-top: 0; }
+
 button {
   padding: 12px 18px;
   border: none;
@@ -30,12 +32,15 @@ button {
   font-size: 16px;
   cursor: pointer;
 }
+
 button:hover {
   background: #1d4ed8;
 }
+
 input[type=file] {
   margin: 20px 0;
 }
+
 footer {
   margin-top: 30px;
   font-size: 14px;
@@ -43,13 +48,21 @@ footer {
 }
 </style>
 </head>
+
 <body>
+
 <div class="container">
+
 <h1>Cursed Words Save Updater</h1>
-<p>Select a save file (.json or .sav). The updater modifies Demo saves to be used with the Full Game automatically.</p>
+
+<p>
+Converts Demo Saves to work with the Full Game.
+</p>
 
 <input type="file" id="fileInput">
-<br>
+
+<br><br>
+
 <button onclick="convertSave()">Convert Save</button>
 
 <p id="status"></p>
@@ -57,96 +70,135 @@ footer {
 <footer>
 Made by Neptune6866
 </footer>
+
 </div>
 
 <script>
-async function convertSave() {
+
+function convertSave() {
+
   const input = document.getElementById("fileInput");
   const status = document.getElementById("status");
 
   if (!input.files.length) {
-    status.textContent = "Please select a file first.";
+    status.textContent = "Select a save file first.";
     return;
   }
 
-  const file = input.files[0];
-  const text = await file.text();
+  const reader = new FileReader();
 
-  let save;
-  try {
-    save = JSON.parse(text);
-  } catch {
-    status.textContent = "Invalid JSON file.";
-    return;
-  }
+  reader.onload = function(e) {
 
-  const template = {
-    Version: 7,
-    HasEnteredSaveFile: false,
-    IsTutorialComplete: false,
-    HasSeenFirstBossDraftDialogue: false,
-    HasSeenFirstPinDraftDialogue: false,
-    HasSeenChallengeUnlockDialogue: false,
-    HasSeenFloorFourUnlockDialogue: false,
-    HasSeenCrownsUnlockDialogue: false,
-    HasSeenNumbersUnlockDialogue: false,
-    HasSeenChessUnlockDialogue: false,
-    HasSeenFractionUnlockDialogue: false,
-    HasSeenCurrencyFirstTimeDialogue: false,
-    HasSeenWobblyFirstTimeDialogue: false,
-    HasSeenUpgradeFirstTimeDialogue: false,
-    HasSeenNinaIntroDialogue: false,
-    HasSeenBonesIntroDialogue: false,
-    HasSeenOctaclesIntroDialogue: false,
-    HasSeenNatIntroDialogue: false,
-    HasSeenFairyInClubhouseDialogue: false,
-    HasSeenWeirdColourDialogue: false,
-    HasSeenGlitchTileDialogue: false,
-    HasSeenScatteredItemDialogue: false,
-    HasSeenGlitchTile: false,
-    MusicVolumePercentage: 50,
-    SFXVolumePercentage: 50,
-    AnimationSpeedPercentage: 50,
-    PiggyBankMoneySaved: 0,
-    IsSilencingMichael: false,
-    IsSilencingShopkeeper: false,
-    IsPreventingClickingInvalidTiles: false,
-    IsPreventingScatteredItemInspection: false,
-    IsDisablingGridTilt: false,
-    IsDisablingTileFloat: false,
-    IsReducingCharacterWobble: false,
-    IsInSpeedrunMode: false,
-    IsShowingLongEnding: false,
-    Language: 0,
-    Achievements: [],
-    CompletedChallenges: [],
-    BulkUnlocksUnlocked: [],
-    UnobservedItemUnlocks: [],
-    CharacterHighestCompletedAscensions: {},
-    CharacterWonFinalBossFight: [],
-    CurrentSavedRun: null,
-    GuttedRunHistory: [],
-    RunsCompletedPerCharacter: {},
-    TotalWins: 0,
-    BestWordScore: 0,
-    HasScoredInfinity: false,
-    MostMoneyEarned: 0,
-    MostRecentPuzzleDateYMD: []
+    let src;
+
+    try {
+      src = JSON.parse(e.target.result);
+    }
+    catch {
+      status.textContent = "Invalid JSON save file.";
+      return;
+    }
+
+    function pick(key, fallback) {
+      return key in src ? src[key] : fallback;
+    }
+
+    const converted = {
+
+Version:7,
+
+HasEnteredSaveFile:pick("HasEnteredSaveFile",false),
+IsTutorialComplete:pick("IsTutorialComplete",false),
+
+HasSeenFirstBossDraftDialogue:pick("HasSeenFirstBossDraftDialogue",false),
+HasSeenFirstPinDraftDialogue:pick("HasSeenFirstPinDraftDialogue",false),
+HasSeenChallengeUnlockDialogue:pick("HasSeenChallengeUnlockDialogue",false),
+HasSeenFloorFourUnlockDialogue:pick("HasSeenFloorFourUnlockDialogue",false),
+HasSeenCrownsUnlockDialogue:pick("HasSeenCrownsUnlockDialogue",false),
+HasSeenNumbersUnlockDialogue:pick("HasSeenNumbersUnlockDialogue",false),
+HasSeenChessUnlockDialogue:pick("HasSeenChessUnlockDialogue",false),
+HasSeenFractionUnlockDialogue:pick("HasSeenFractionUnlockDialogue",false),
+
+HasSeenCurrencyFirstTimeDialogue:pick("HasSeenCurrencyFirstTimeDialogue",false),
+HasSeenWobblyFirstTimeDialogue:pick("HasSeenWobblyFirstTimeDialogue",false),
+HasSeenUpgradeFirstTimeDialogue:pick("HasSeenUpgradeFirstTimeDialogue",false),
+
+HasSeenNinaIntroDialogue:pick("HasSeenNinaIntroDialogue",false),
+HasSeenBonesIntroDialogue:pick("HasSeenBonesIntroDialogue",false),
+HasSeenOctaclesIntroDialogue:pick("HasSeenOctaclesIntroDialogue",false),
+HasSeenNatIntroDialogue:pick("HasSeenNatIntroDialogue",false),
+
+HasSeenFairyInClubhouseDialogue:pick("HasSeenFairyInClubhouseDialogue",false),
+HasSeenWeirdColourDialogue:pick("HasSeenWeirdColourDialogue",false),
+HasSeenGlitchTileDialogue:pick("HasSeenGlitchTileDialogue",false),
+HasSeenScatteredItemDialogue:pick("HasSeenScatteredItemDialogue",false),
+HasSeenGlitchTile:pick("HasSeenGlitchTile",false),
+
+MusicVolumePercentage:pick("MusicVolumePercentage",50),
+SFXVolumePercentage:pick("SFXVolumePercentage",50),
+AnimationSpeedPercentage:pick("AnimationSpeedPercentage",50),
+
+PiggyBankMoneySaved:pick("PiggyBankMoneySaved",0),
+
+IsSilencingMichael:pick("IsSilencingMichael",false),
+IsSilencingShopkeeper:pick("IsSilencingShopkeeper",false),
+IsPreventingClickingInvalidTiles:pick("IsPreventingClickingInvalidTiles",false),
+IsPreventingScatteredItemInspection:pick("IsPreventingScatteredItemInspection",false),
+IsDisablingGridTilt:pick("IsDisablingGridTilt",false),
+IsDisablingTileFloat:pick("IsDisablingTileFloat",false),
+IsReducingCharacterWobble:pick("IsReducingCharacterWobble",false),
+
+IsInSpeedrunMode:pick("IsInSpeedrunMode",false),
+IsShowingLongEnding:pick("IsShowingLongEnding",false),
+
+Language:pick("Language","EnglishDefault"),
+
+Achievements:pick("Achievements",[]),
+
+CompletedChallenges:pick("CompletedChallenges",[]),
+BulkUnlocksUnlocked:pick("BulkUnlocksUnlocked",[]),
+UnobservedItemUnlocks:pick("UnobservedItemUnlocks",[]),
+
+CharacterHighestCompletedAscensions:pick("CharacterHighestCompletedAscensions",{}),
+
+CharacterWonFinalBossFight:[],
+
+CurrentSavedRun:null,
+
+RunsCompletedPerCharacter:pick("RunsCompletedPerCharacter",{}),
+
+TotalWins:pick("TotalWins",0),
+BestWordScore:pick("BestWordScore",0),
+HasScoredInfinity:pick("HasScoredInfinity",false),
+MostMoneyEarned:pick("MostMoneyEarned",0),
+
+MostRecentPuzzleDateYMD:pick("MostRecentPuzzleDateYMD",[1,1,1])
+
+    };
+
+    const blob = new Blob(
+      [JSON.stringify(converted,null,2)],
+      {type:"application/json"}
+    );
+
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+
+    a.href = url;
+    a.download = "converted_slot_1.sav";
+
+    a.click();
+
+    status.textContent = "Conversion complete ✔ Save ready to load.";
+
   };
 
-  const converted = {...template, ...save};
-  converted.Version = 7;
+  reader.readAsText(input.files[0]);
 
-  const blob = new Blob([JSON.stringify(converted, null, 2)], {type:"application/json"});
-  const url = URL.createObjectURL(blob);
-
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "slot_1.sav";
-  a.click();
-
-  status.textContent = "Conversion complete! File downloaded.";
 }
+
 </script>
+
 </body>
 </html>
