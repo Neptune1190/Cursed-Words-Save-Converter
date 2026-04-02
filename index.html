@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cursed Words Save Updater</title>
+<style>
+body {
+  font-family: system-ui, sans-serif;
+  margin: 40px;
+  background: #f5f7fb;
+}
+.container {
+  max-width: 800px;
+  margin: auto;
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
+h1 {
+  margin-top: 0;
+}
+button {
+  padding: 12px 18px;
+  border: none;
+  border-radius: 8px;
+  background: #2563eb;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+button:hover {
+  background: #1d4ed8;
+}
+input[type=file] {
+  margin: 20px 0;
+}
+footer {
+  margin-top: 30px;
+  font-size: 14px;
+  color: #666;
+}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Cursed Words Save Updater</h1>
+<p>Select a save file (.json or .sav). The updater modifies Demo saves to be used with the Full Game automatically.</p>
+
+<input type="file" id="fileInput">
+<br>
+<button onclick="convertSave()">Convert Save</button>
+
+<p id="status"></p>
+
+<footer>
+Made by Neptune6866
+</footer>
+</div>
+
+<script>
+async function convertSave() {
+  const input = document.getElementById("fileInput");
+  const status = document.getElementById("status");
+
+  if (!input.files.length) {
+    status.textContent = "Please select a file first.";
+    return;
+  }
+
+  const file = input.files[0];
+  const text = await file.text();
+
+  let save;
+  try {
+    save = JSON.parse(text);
+  } catch {
+    status.textContent = "Invalid JSON file.";
+    return;
+  }
+
+  const template = {
+    Version: 7,
+    HasEnteredSaveFile: false,
+    IsTutorialComplete: false,
+    HasSeenFirstBossDraftDialogue: false,
+    HasSeenFirstPinDraftDialogue: false,
+    HasSeenChallengeUnlockDialogue: false,
+    HasSeenFloorFourUnlockDialogue: false,
+    HasSeenCrownsUnlockDialogue: false,
+    HasSeenNumbersUnlockDialogue: false,
+    HasSeenChessUnlockDialogue: false,
+    HasSeenFractionUnlockDialogue: false,
+    HasSeenCurrencyFirstTimeDialogue: false,
+    HasSeenWobblyFirstTimeDialogue: false,
+    HasSeenUpgradeFirstTimeDialogue: false,
+    HasSeenNinaIntroDialogue: false,
+    HasSeenBonesIntroDialogue: false,
+    HasSeenOctaclesIntroDialogue: false,
+    HasSeenNatIntroDialogue: false,
+    HasSeenFairyInClubhouseDialogue: false,
+    HasSeenWeirdColourDialogue: false,
+    HasSeenGlitchTileDialogue: false,
+    HasSeenScatteredItemDialogue: false,
+    HasSeenGlitchTile: false,
+    MusicVolumePercentage: 50,
+    SFXVolumePercentage: 50,
+    AnimationSpeedPercentage: 50,
+    PiggyBankMoneySaved: 0,
+    IsSilencingMichael: false,
+    IsSilencingShopkeeper: false,
+    IsPreventingClickingInvalidTiles: false,
+    IsPreventingScatteredItemInspection: false,
+    IsDisablingGridTilt: false,
+    IsDisablingTileFloat: false,
+    IsReducingCharacterWobble: false,
+    IsInSpeedrunMode: false,
+    IsShowingLongEnding: false,
+    Language: 0,
+    Achievements: [],
+    CompletedChallenges: [],
+    BulkUnlocksUnlocked: [],
+    UnobservedItemUnlocks: [],
+    CharacterHighestCompletedAscensions: {},
+    CharacterWonFinalBossFight: [],
+    CurrentSavedRun: null,
+    GuttedRunHistory: [],
+    RunsCompletedPerCharacter: {},
+    TotalWins: 0,
+    BestWordScore: 0,
+    HasScoredInfinity: false,
+    MostMoneyEarned: 0,
+    MostRecentPuzzleDateYMD: []
+  };
+
+  const converted = {...template, ...save};
+  converted.Version = 7;
+
+  const blob = new Blob([JSON.stringify(converted, null, 2)], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "slot_1.sav";
+  a.click();
+
+  status.textContent = "Conversion complete! File downloaded.";
+}
+</script>
+</body>
+</html>
